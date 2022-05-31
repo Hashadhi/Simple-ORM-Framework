@@ -1,12 +1,10 @@
 package lk.ijse.dep8.orm;
 
-import com.sun.org.apache.bcel.internal.generic.ATHROW;
 import lk.ijse.dep8.orm.annotation.Entity;
 import lk.ijse.dep8.orm.annotation.Id;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.SQLException;
 
 class SessionFactoryTest {
     public static void main(String[] args) throws Exception {

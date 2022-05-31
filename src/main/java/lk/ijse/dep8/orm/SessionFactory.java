@@ -10,10 +10,25 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
+
+/**
+ * SessionFactory is the starting point of ORM
+ *
+ * @author Hashadhi-Jayasinghe
+ * @since 1.0.0
+ */
+
 public class SessionFactory {
 
     private List<Class<?>> entityClassList = new ArrayList<>();
     private Connection connection;
+
+    /**
+     * Add classes that have been annotated with <code>@Entity</code> annotation
+     * @param entityClass
+     * @return SessionFactory
+     * @throws RuntimeException If the class is not annotated with <code>@Entity</code> annotation
+     */
 
     public SessionFactory addAnnotatedClass(Class<?> entityClass) {
 
@@ -25,10 +40,25 @@ public class SessionFactory {
         return this;
     }
 
+    /**
+     *
+     * Set the Connection
+     *
+     * @param connection Set an initialized JDBC Connectoin
+     * @return SessionFactory
+     */
+
     public SessionFactory setConnection(Connection connection) {
         this.connection = connection;
         return this;
     }
+
+    /**
+     * Validate whether everything is okay
+     *
+     * @return SessionFactory
+     * @throws RuntimeException Throws when there is no connection
+     */
 
     public SessionFactory build(){
         if (this.connection == null) {
@@ -37,6 +67,11 @@ public class SessionFactory {
 
         return this;
     }
+
+    /**
+     * Bootstrap the ORM framework and create the tables
+     * @throws SQLException
+     */
 
 
     public void bootstrap() throws SQLException {
