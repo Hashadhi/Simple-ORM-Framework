@@ -1,8 +1,12 @@
 package lk.ijse.dep8.orm;
 
 import lk.ijse.dep8.orm.annotation.Entity;
+import lk.ijse.dep8.orm.annotation.Id;
 
+import java.lang.reflect.Field;
 import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,6 +28,47 @@ public class SessionFactory {
     public SessionFactory setConnection(Connection connection) {
         this.connection = connection;
         return this;
+    }
+
+    public SessionFactory build(){
+        if (this.connection == null) {
+            throw new RuntimeException("Failed to build without a connection");
+        }
+
+        return this;
+    }
+
+
+    public void bootstrap() throws SQLException {
+        for (Class<?> entity : entityClassList) {
+            String tableName = entity.getDeclaredAnnotation(Entity.class).value();
+            if(tableName.trim().isEmpty()) tableName = entity.getSimpleName();
+            Field[] fields = entity.getDeclaredFields();
+            List<String> columns = new ArrayList<>();
+
+            String primaryKey=null;
+            for (Field field : fields) {
+
+                Id primaryKeyField = field.getDeclaredAnnotation(Id.class);
+                if (primaryKeyField != null) {
+                    primaryKey = field.getName();
+                    continue;
+                }
+                columns.add(field.getName());
+
+            }
+
+            if(primaryKey == null) throw new RuntimeException("Entity without a primary key");
+
+            StringBuilder sb = new StringBuilder();
+            sb.append("CREATE TABLE ").append(tableName).append("(");
+            for (String column : columns) {
+                sb.append(column + " VARCHAR(255), ");
+            }
+            sb.append(primaryKey).append(" VARCHAR(255) PRIMARY KEY)");
+            Statement stm = connection.createStatement();
+            stm.execute(sb.toString());
+        }
     }
 
 
