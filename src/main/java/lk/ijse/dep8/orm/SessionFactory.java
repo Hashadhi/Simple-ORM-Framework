@@ -61,16 +61,13 @@ public class SessionFactory {
             if(primaryKey == null) throw new RuntimeException("Entity without a primary key");
 
             StringBuilder sb = new StringBuilder();
-            sb.append("CREATE TABLE ").append(tableName).append("(");
+            sb.append("CREATE TABLE IF NOT EXISTS ").append(tableName).append("(");
             for (String column : columns) {
                 sb.append(column + " VARCHAR(255), ");
             }
-            sb.append(primaryKey).append(" VARCHAR(255) PRIMARY KEY)");
+            sb.append(primaryKey).append(" VARCHAR(255) PRIMARY KEY);");
             Statement stm = connection.createStatement();
             stm.execute(sb.toString());
         }
     }
-
-
-
 }
